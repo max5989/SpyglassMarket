@@ -1,0 +1,151 @@
+.demo-search-engine{
+
+    display:flex;
+    justify-content:center;
+    margin:60px auto;
+    width:100%;
+
+}
+
+.search-window{
+
+    width:800px;
+    max-width:95%;
+    background:#161616;
+    border:1px solid #2d2d2d;
+    border-radius:18px;
+    padding:30px;
+    color:white;
+    font-family:Arial,Helvetica,sans-serif;
+
+    box-shadow:
+    0 0 35px rgba(0,255,180,.08);
+
+}
+
+.search-bar{
+
+    display:flex;
+    align-items:center;
+    background:#242424;
+    border-radius:12px;
+    padding:14px 18px;
+    margin-bottom:30px;
+
+}
+
+.search-icon{
+
+    font-size:22px;
+    margin-right:12px;
+
+}
+
+.search-bar input{
+
+    width:100%;
+    background:none;
+    border:none;
+    color:white;
+    font-size:20px;
+    outline:none;
+
+}
+
+.market{
+
+    margin-bottom:18px;
+
+}
+
+.market span{
+
+    display:block;
+    margin-bottom:6px;
+    color:#cfcfcf;
+
+}
+
+.bar{
+
+    height:10px;
+    background:#333;
+    border-radius:20px;
+    overflow:hidden;
+
+}
+
+.bar div{
+
+    width:0%;
+    height:100%;
+    background:#00d084;
+    transition:width .15s linear;
+
+}
+
+#statusText{
+
+    margin-top:25px;
+    color:#7fffd4;
+    font-family:monospace;
+    min-height:30px;
+
+}
+
+.results{
+
+    margin-top:35px;
+
+}
+
+.card{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    background:#242424;
+    border-radius:12px;
+    padding:15px;
+    margin-bottom:12px;
+    opacity:0;
+    transform:translateY(20px);
+    transition:.45s;
+
+}
+
+.card.show{
+
+    opacity:1;
+    transform:translateY(0);
+
+}
+
+.left{
+
+    display:flex;
+    flex-direction:column;
+
+}
+
+.title{
+
+    font-weight:bold;
+    margin-bottom:4px;
+
+}
+
+.marketplace{
+
+    color:#8f8f8f;
+    font-size:14px;
+
+}
+
+.price{
+
+    color:#00ff9d;
+    font-size:22px;
+    font-weight:bold;
+
+}
