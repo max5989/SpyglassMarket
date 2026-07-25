@@ -1,48 +1,33 @@
-const searches=[
+const nodes=[
+"ebay",
+"facebook",
+"craigslist",
+"offerup"
+];
 
-"1964 Oldsmobile 98",
-"Milwaukee Tool Box",
-"Snap-On Toolbox",
-"Ford Bronco",
-"Vintage Coca Cola Machine",
-"Chevrolet C10",
-"Nintendo Switch OLED",
-"Honda Generator"
+
+const messages=[
+
+"Connecting to marketplaces...",
+"Searching listings...",
+"Comparing prices...",
+"Removing duplicate listings...",
+"Ranking best matches...",
+"Complete!"
 
 ];
 
-const fakeListings=[
 
-{
-title:"1964 Oldsmobile 98",
-price:18500,
-site:"Facebook Marketplace"
-},
+const results=[
 
-{
-title:"1964 Oldsmobile Ninety-Eight",
-price:19750,
-site:"Craigslist"
-},
+"1964 Oldsmobile 98 - $18,500 - Facebook Marketplace",
 
-{
-title:"1964 Oldsmobile Holiday Sedan",
-price:17900,
-site:"eBay"
-}
+"1964 Oldsmobile Holiday Sedan - $19,750 - eBay",
+
+"1964 Oldsmobile Ninety-Eight - $17,900 - Craigslist"
 
 ];
 
-const bars={
-
-ebayBar:0,
-fbBar:0,
-clBar:0,
-ouBar:0
-
-};
-
-const ids=Object.keys(bars);
 
 function sleep(ms){
 
@@ -50,108 +35,82 @@ return new Promise(r=>setTimeout(r,ms));
 
 }
 
-async function fillBar(id){
 
-const bar=document.getElementById(id);
 
-for(let i=0;i<=100;i++){
+async function runSearch(){
 
-bar.style.width=i+"%";
-
-await sleep(12+Math.random()*4);
-
-}
-
-}
-
-async function typeText(text){
-
-const box=document.getElementById("demoSearch");
-
-box.value="";
-
-for(const letter of text){
-
-box.value+=letter;
-
-await sleep(75);
-
-}
-
-}
-
-function makeCard(item){
-
-const card=document.createElement("div");
-
-card.className="card";
-
-card.innerHTML=`
-
-<div class="left">
-
-<div class="title">${item.title}</div>
-
-<div class="marketplace">${item.site}</div>
-
-</div>
-
-<div class="price">$${item.price.toLocaleString()}</div>
-
-`;
-
-document.getElementById("results").appendChild(card);
-
-setTimeout(()=>card.classList.add("show"),100);
-
-}
-
-async function demo(){
 
 while(true){
 
-document.getElementById("results").innerHTML="";
 
-document.getElementById("statusText").textContent="";
+document.querySelectorAll(".node")
+.forEach(n=>n.classList.remove("active"));
 
-ids.forEach(id=>{
 
-document.getElementById(id).style.width="0%";
+document.getElementById("liveResults").innerHTML="";
+
+
+for(let msg of messages.slice(0,5)){
+
+document.getElementById("liveStatus").innerText=msg;
+
+
+let randomNode=
+nodes[Math.floor(Math.random()*nodes.length)];
+
+
+document.querySelector("." + randomNode)
+.classList.add("active");
+
+
+await sleep(1200);
+
+
+document.querySelector("." + randomNode)
+.classList.remove("active");
+
+
+}
+
+
+
+document.getElementById("liveStatus").innerText=
+"✓ Search complete";
+
+
+await sleep(800);
+
+
+
+results.forEach((r,i)=>{
+
+setTimeout(()=>{
+
+let div=document.createElement("div");
+
+div.className="result";
+
+div.innerText=r;
+
+document
+.getElementById("liveResults")
+.appendChild(div);
+
+
+},i*500);
+
 
 });
 
-const search=searches[Math.floor(Math.random()*searches.length)];
 
-await typeText(search);
 
-document.getElementById("statusText").textContent="Searching marketplaces...";
+await sleep(6000);
 
-await Promise.all(ids.map(fillBar));
-
-document.getElementById("statusText").textContent="Removing duplicate listings...";
-
-await sleep(1200);
-
-document.getElementById("statusText").textContent="Ranking best matches...";
-
-await sleep(1200);
-
-document.getElementById("statusText").textContent="Displaying results";
-
-await sleep(700);
-
-for(const item of fakeListings){
-
-makeCard(item);
-
-await sleep(350);
 
 }
 
-await sleep(5000);
 
 }
 
-}
 
-demo();
+runSearch();
