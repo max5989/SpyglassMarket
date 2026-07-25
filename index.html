@@ -1,48 +1,48 @@
-<section class="demo-search-engine">
+<section class="network-demo">
 
-    <div class="search-window">
+    <div class="core">
 
-        <div class="search-bar">
+        <div class="core-ring"></div>
 
-            <span class="search-icon">🔍</span>
-
-            <input
-                id="demoSearch"
-                type="text"
-                readonly
-                autocomplete="off">
-
+        <div class="core-text">
+            SEARCH<br>
+            ENGINE
         </div>
-
-        <div class="progress-area">
-
-            <div class="market">
-                <span>eBay</span>
-                <div class="bar"><div id="ebayBar"></div></div>
-            </div>
-
-            <div class="market">
-                <span>Facebook Marketplace</span>
-                <div class="bar"><div id="fbBar"></div></div>
-            </div>
-
-            <div class="market">
-                <span>Craigslist</span>
-                <div class="bar"><div id="clBar"></div></div>
-            </div>
-
-            <div class="market">
-                <span>OfferUp</span>
-                <div class="bar"><div id="ouBar"></div></div>
-            </div>
-
-        </div>
-
-        <div id="statusText"></div>
-
-        <div id="results" class="results"></div>
 
     </div>
 
+
+    <div class="node ebay">
+        eBay
+    </div>
+
+    <div class="node facebook">
+        Facebook<br>Marketplace
+    </div>
+
+    <div class="node craigslist">
+        Craigslist
+    </div>
+
+    <div class="node offerup">
+        OfferUp
+    </div>
+
+
+    <svg class="connections">
+        <line id="line1"/>
+        <line id="line2"/>
+        <line id="line3"/>
+        <line id="line4"/>
+    </svg>
+
+
+    <div id="liveStatus">
+        Initializing search...
+    </div>
+
+
+    <div id="liveResults"></div>
+
+
 </section>
-CSS
