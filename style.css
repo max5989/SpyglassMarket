@@ -335,3 +335,55 @@ body {
         display: none;
     }
 }
+.site-header {
+    min-height: 170px;
+    padding: 30px 20px;
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+
+    text-align: left;
+
+    background: rgba(255, 250, 240, 0.75);
+    border-bottom: 1px solid rgba(181, 138, 53, 0.35);
+}
+
+.header-logo {
+    width: 125px;
+    height: 125px;
+    object-fit: contain;
+}
+
+.site-header h1 {
+    margin: 0;
+
+    color: var(--brown);
+    font-size: clamp(32px, 5vw, 58px);
+    font-weight: normal;
+    letter-spacing: 4px;
+    text-transform: uppercase;
+}
+
+.site-header p {
+    margin: 10px 0 0;
+
+    color: var(--blue);
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 15px;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+}
+
+@media (max-width: 600px) {
+    .site-header {
+        flex-direction: column;
+        text-align: center;
+    }
+
+    .header-logo {
+        width: 100px;
+        height: 100px;
+    }
+}
