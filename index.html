@@ -1,33 +1,48 @@
-<!DOCTYPE html>
-<html>
-<head>
-    <title>Spyglass Market</title>
+<section class="demo-search-engine">
 
-    <style>
-        body {
-            background: #111;
-            color: white;
-            font-family: Arial, sans-serif;
-            text-align: center;
-            padding-top: 150px;
-        }
+    <div class="search-window">
 
-        h1 {
-            font-size: 48px;
-        }
+        <div class="search-bar">
 
-        p {
-            font-size: 22px;
-        }
-    </style>
-</head>
+            <span class="search-icon">🔍</span>
 
-<body>
+            <input
+                id="demoSearch"
+                type="text"
+                readonly
+                autocomplete="off">
 
-<h1>Spyglass Market</h1>
+        </div>
 
-<p>🔭 Coming Soon!</p>
+        <div class="progress-area">
 
-<p>
-We're building a search engine that helps you discover products across multiple online marketplaces and retailers—all from one search. (Hi Mom!).
-</p>
+            <div class="market">
+                <span>eBay</span>
+                <div class="bar"><div id="ebayBar"></div></div>
+            </div>
+
+            <div class="market">
+                <span>Facebook Marketplace</span>
+                <div class="bar"><div id="fbBar"></div></div>
+            </div>
+
+            <div class="market">
+                <span>Craigslist</span>
+                <div class="bar"><div id="clBar"></div></div>
+            </div>
+
+            <div class="market">
+                <span>OfferUp</span>
+                <div class="bar"><div id="ouBar"></div></div>
+            </div>
+
+        </div>
+
+        <div id="statusText"></div>
+
+        <div id="results" class="results"></div>
+
+    </div>
+
+</section>
+CSS
