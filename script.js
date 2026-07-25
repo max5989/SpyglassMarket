@@ -20,7 +20,7 @@ const messages=[
 
 const results=[
 
-"1964 Oldsmobile 98 - $18,500 - Facebook Marketplace",
+"Your Mom - $Priceless - My place",
 
 "1964 Oldsmobile Holiday Sedan - $19,750 - eBay",
 
