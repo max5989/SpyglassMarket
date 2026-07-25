@@ -2,83 +2,217 @@
 <html lang="en">
 
 <head>
+    <meta charset="UTF-8">
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
 
-<title>Spyglass Market</title>
+    <meta
+        name="description"
+        content="Search multiple online marketplaces from one place."
+    >
 
-<link rel="stylesheet" href="style.css">
+    <title>Your Search Engine</title>
 
+    <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
-<header class="site-header">
-    <img src="logo.png" alt="" class="header-logo">
 
-    <div>
-        <h1>Spyglass Market</h1>
-        <p>Compare Products Far And Wide.</p>
-    </div>
-</header>
+    <header class="site-header">
 
-<section class="network-demo">
+        <img
+            src="spyglass-logo.png"
+            alt="Brass spyglass with an internet globe in its lens"
+            class="header-logo"
+        >
 
-    <div class="core">
+        <div class="brand-text">
+            <p class="eyebrow">Explore every marketplace</p>
 
-        <div class="core-ring"></div>
+            <h1>Your Search Engine</h1>
 
-        <div class="core-logo">
-    <img src="logo.png" alt="Your Search Engine logo">
-</div>
+            <p class="tagline">
+                One search. Every marketplace.
+            </p>
+        </div>
 
-    </div>
-
-
-    <div class="node ebay">
-        eBay
-    </div>
+    </header>
 
 
-    <div class="node facebook">
-        Facebook<br>Marketplace
-    </div>
+    <main>
+
+        <section
+            class="map-section"
+            aria-label="Marketplace search demonstration"
+        >
+
+            <div class="map-decoration map-decoration-left"></div>
+            <div class="map-decoration map-decoration-right"></div>
+
+            <div class="compass-rose" aria-hidden="true">
+                <span class="compass-north">N</span>
+                <span class="compass-east">E</span>
+                <span class="compass-south">S</span>
+                <span class="compass-west">W</span>
+                <div class="compass-diamond"></div>
+            </div>
 
 
-    <div class="node craigslist">
-        Craigslist
-    </div>
+            <div class="search-preview">
+
+                <label for="demoSearch">
+                    Search the marketplaces
+                </label>
+
+                <div class="search-box">
+
+                    <input
+                        id="demoSearch"
+                        type="text"
+                        value=""
+                        placeholder="Search anything..."
+                        readonly
+                        aria-label="Demonstration search query"
+                    >
+
+                    <button
+                        type="button"
+                        aria-label="Search demonstration"
+                        disabled
+                    >
+                        Search
+                    </button>
+
+                </div>
+
+            </div>
 
 
-    <div class="node offerup">
-        OfferUp
-    </div>
+            <div class="network-demo">
+
+                <svg
+                    class="connections"
+                    aria-hidden="true"
+                >
+                    <line id="line-ebay"></line>
+                    <line id="line-facebook"></line>
+                    <line id="line-craigslist"></line>
+                    <line id="line-offerup"></line>
+                </svg>
 
 
-    <svg class="connections">
-
-        <line id="line1"/>
-        <line id="line2"/>
-        <line id="line3"/>
-        <line id="line4"/>
-
-    </svg>
+                <article class="market-node ebay" data-market="ebay">
+                    <p class="market-name">eBay</p>
+                    <p class="market-detail">Auction and retail listings</p>
+                    <p class="market-status">Standing by</p>
+                </article>
 
 
-    <div id="liveStatus">
-        Initializing search...
-    </div>
+                <article
+                    class="market-node facebook"
+                    data-market="facebook"
+                >
+                    <p class="market-name">Facebook Marketplace</p>
+                    <p class="market-detail">Local marketplace listings</p>
+                    <p class="market-status">Standing by</p>
+                </article>
 
 
-    <div id="liveResults"></div>
+                <article
+                    class="market-node craigslist"
+                    data-market="craigslist"
+                >
+                    <p class="market-name">Craigslist</p>
+                    <p class="market-detail">Regional classified listings</p>
+                    <p class="market-status">Standing by</p>
+                </article>
 
 
-</section>
+                <article class="market-node offerup" data-market="offerup">
+                    <p class="market-name">OfferUp</p>
+                    <p class="market-detail">Local buying and selling</p>
+                    <p class="market-status">Standing by</p>
+                </article>
 
 
-<script src="script.js"></script>
+                <div class="central-logo">
 
+                    <div class="logo-halo"></div>
+
+                    <img
+                        src="spyglass-logo.png"
+                        alt="Search engine spyglass logo"
+                    >
+
+                    <p>Gathering the finest matches</p>
+
+                </div>
+
+            </div>
+
+
+            <div
+                id="liveStatus"
+                class="live-status"
+                aria-live="polite"
+            >
+                Preparing the search expedition...
+            </div>
+
+
+            <section
+                id="liveResults"
+                class="results-panel"
+                aria-label="Demonstration search results"
+            ></section>
+
+        </section>
+
+
+        <section class="features-section">
+
+            <article class="feature">
+                <div class="feature-symbol">◎</div>
+                <h2>Search Far and Wide</h2>
+                <p>
+                    Explore listings from multiple online marketplaces
+                    without repeating the same search.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-symbol">⌁</div>
+                <h2>Compare Your Findings</h2>
+                <p>
+                    Bring prices, conditions, and locations together in one
+                    organized set of results.
+                </p>
+            </article>
+
+            <article class="feature">
+                <div class="feature-symbol">✦</div>
+                <h2>Discover Better Matches</h2>
+                <p>
+                    Sort through duplicate listings and uncover the most
+                    useful options first.
+                </p>
+            </article>
+
+        </section>
+
+    </main>
+
+
+    <footer class="site-footer">
+        <p>Discover more. Search farther. Find better.</p>
+        <p class="footer-note">Website currently under development.</p>
+    </footer>
+
+
+    <script src="script.js"></script>
 
 </body>
 
