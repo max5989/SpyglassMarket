@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>Spyglass Market | Search Multiple Marketplaces at Once</title>
+  <meta name="description" content="Spyglass Market helps you explore listings across multiple online marketplaces from one place. Search tools, antiques, vehicles, collectibles, RV parts, classic car parts, and more.">
+  <meta name="robots" content="index, follow">
+  <link rel="canonical" href="https://spyglassmarket.com/">
+
+  <meta property="og:type" content="website">
+  <meta property="og:title" content="Spyglass Market | Explore Every Marketplace">
+  <meta property="og:description" content="A smarter way to discover listings across multiple online marketplaces.">
+  <meta property="og:url" content="https://spyglassmarket.com/">
+  <meta property="og:image" content="https://spyglassmarket.com/spyglass-logo.png">
+
+  <link rel="icon" href="favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebSite",
+    "name": "Spyglass Market",
+    "url": "https://spyglassmarket.com/",
+    "description": "Explore listings across multiple online marketplaces from one place.",
+    "potentialAction": {
+      "@type": "SearchAction",
+      "target": "https://spyglassmarket.com/results.html?q={search_term_string}",
+      "query-input": "required name=search_term_string"
+    }
+  }
+  </script>
+</head>
+<body>
+  <div class="paper-noise" aria-hidden="true"></div>
+
+  <header class="site-header">
+    <a class="brand" href="#top" aria-label="Spyglass Market home">
+      <img src="spyglass-logo.png" alt="" class="brand-logo">
+      <span>Spyglass Market</span>
+    </a>
+
+    <nav aria-label="Main navigation">
+      <a href="#how-it-works">How It Works</a>
+      <a href="#why-spyglass">Why Spyglass</a>
+      <a href="#launch">Launch Updates</a>
+    </nav>
+  </header>
+
+  <main id="top">
+    <section class="hero">
+      <div class="hero-copy">
+        <p class="eyebrow">Explore Every Marketplace</p>
+        <h1>Search multiple online marketplaces from one place.</h1>
+        <p class="hero-text">
+          Spyglass Market is being built to help you discover tools, antiques,
+          vehicles, collectibles, RV parts, classic car parts, and more—without
+          searching every marketplace separately.
+        </p>
+
+        <form class="search-shell" id="market-search" action="results.html" method="get" role="search">
+          <label class="sr-only" for="search-input">Search marketplaces</label>
+          <input id="search-input" name="q" type="search" placeholder="Search for anything..." autocomplete="off" required>
+          <button type="submit">Search Markets</button>
+        </form>
+        <p class="search-note" id="search-note">Search eBay now; more marketplace connections are being prepared.</p>
+
+        <div class="hero-actions">
+          <a class="button primary" href="#how-it-works">See How It Works</a>
+          <a class="button secondary" href="#launch">Follow the Journey</a>
+        </div>
+      </div>
+
+      <div class="map-card" aria-label="Illustration of marketplace routes">
+        <div class="compass" aria-hidden="true">
+          <span class="north">N</span>
+          <span class="needle"></span>
+        </div>
+
+        <svg class="route-map" viewBox="0 0 720 520" role="img" aria-label="Explorer routes connecting Spyglass Market to online marketplaces">
+          <defs>
+            <filter id="roughen">
+              <feTurbulence type="fractalNoise" baseFrequency=".015" numOctaves="2" seed="7" result="noise"/>
+              <feDisplacementMap in="SourceGraphic" in2="noise" scale="2"/>
+            </filter>
+          </defs>
+
+          <path class="route route-one" d="M360 260 C250 165 190 150 105 105"/>
+          <path class="route route-two" d="M360 260 C485 150 535 140 615 100"/>
+          <path class="route route-three" d="M360 260 C245 355 185 385 95 425"/>
+          <path class="route route-four" d="M360 260 C470 355 540 385 625 430"/>
+
+          <g class="market-node node-one">
+            <circle cx="105" cy="105" r="42"/>
+            <text x="105" y="111">eBay</text>
+          </g>
+          <g class="market-node node-two">
+            <circle cx="615" cy="100" r="50"/>
+            <text x="615" y="94">Facebook</text>
+            <text x="615" y="112">Marketplace</text>
+          </g>
+          <g class="market-node node-three">
+            <circle cx="95" cy="425" r="48"/>
+            <text x="95" y="431">Craigslist</text>
+          </g>
+          <g class="market-node node-four">
+            <circle cx="625" cy="430" r="44"/>
+            <text x="625" y="436">OfferUp</text>
+          </g>
+
+          <g class="hub-node">
+            <circle cx="360" cy="260" r="82"/>
+            <image href="spyglass-logo.png" x="312" y="200" width="96" height="96" preserveAspectRatio="xMidYMid meet"/>
+            <text x="360" y="322">SPYGLASS MARKET</text>
+          </g>
+        </svg>
+
+        <p class="map-caption">One search. Many marketplaces. Better discoveries.</p>
+      </div>
+    </section>
+
+    <section class="trust-strip" aria-label="Planned marketplace coverage">
+      <span>eBay</span>
+      <span>Facebook Marketplace</span>
+      <span>Craigslist</span>
+      <span>OfferUp</span>
+      <span>More to come</span>
+    </section>
+
+    <section class="section" id="how-it-works">
+      <div class="section-heading">
+        <p class="eyebrow">The Expedition</p>
+        <h2>How Spyglass Market will work</h2>
+        <p>Designed to turn a scattered hunt into one focused search.</p>
+      </div>
+
+      <div class="steps-grid">
+        <article class="feature-card">
+          <span class="card-number">01</span>
+          <h3>Enter your search</h3>
+          <p>Describe the part, collectible, vehicle, tool, or hard-to-find item you are looking for.</p>
+        </article>
+        <article class="feature-card">
+          <span class="card-number">02</span>
+          <h3>Scan the marketplaces</h3>
+          <p>Spyglass Market will gather relevant listings from supported marketplaces into one view.</p>
+        </article>
+        <article class="feature-card">
+          <span class="card-number">03</span>
+          <h3>Compare and discover</h3>
+          <p>Review promising listings, compare options, and follow the trail to the original seller.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section split-section" id="why-spyglass">
+      <div class="illustration-panel">
+        <div class="ornament">✦</div>
+        <h2>Built for difficult searches.</h2>
+        <p>
+          The best listing is often hidden on the one marketplace you did not check.
+          Spyglass Market is intended to make those overlooked finds easier to uncover.
+        </p>
+      </div>
+
+      <div class="benefits-list">
+        <article>
+          <h3>Less repetitive searching</h3>
+          <p>Start once instead of entering the same search into several websites.</p>
+        </article>
+        <article>
+          <h3>Broader discovery</h3>
+          <p>Explore more places without keeping a maze of tabs open.</p>
+        </article>
+        <article>
+          <h3>Made for treasure hunters</h3>
+          <p>Especially useful for uncommon parts, vintage goods, project vehicles, and local finds.</p>
+        </article>
+      </div>
+    </section>
+
+    <section class="section launch-section" id="launch">
+      <div>
+        <p class="eyebrow">Charting the Course</p>
+        <h2>Spyglass Market is under development.</h2>
+        <p>
+          The landing page is live while the marketplace search system is being built.
+          Check back as new features and supported marketplaces are added.
+        </p>
+      </div>
+      <a class="button primary" href="results.html?q=1964+Oldsmobile+parts">Try a Demo Search</a>
+    </section>
+  </main>
+
+  <footer>
+    <div>
+      <strong>Spyglass Market</strong>
+      <p>Explore farther. Discover more.</p>
+    </div>
+    <div class="footer-links">
+      <a href="#top">Home</a>
+      <a href="#how-it-works">How It Works</a>
+      <a href="#launch">Updates</a>
+    </div>
+    <p class="copyright">© <span id="year"></span> Spyglass Market. All rights reserved.</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>
