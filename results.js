@@ -13,147 +13,366 @@ const sortControl = document.getElementById("sort-results");
 const clearFilters = document.getElementById("clear-filters");
 const applyFilters = document.getElementById("apply-filters");
 const externalButtons = document.getElementById("external-buttons");
+
 document.getElementById("year").textContent = new Date().getFullYear();
 
 queryInput.value = query;
 document.title = `${query} | Spyglass Market`;
 title.textContent = `Discoveries for “${query}”`;
 
-const templates = [
-  ["Original Vintage Part",84.99,"Used","Free shipping",1],
-  ["Restored Assembly",149.50,"Used","$18.40 shipping",4],
-  ["New Replacement Kit",42.95,"New","Free shipping",2],
-  ["OEM Hardware Lot",29.00,"Used","$7.95 shipping",8],
-  ["Repairable Parts Lot",37.75,"For parts","Local pickup",6],
-  ["Rare Dealer Stock Item",219.99,"New","$12.00 shipping",3],
-  ["Chrome Trim and Brackets",67.40,"Used","Free shipping",11],
-  ["Service Manual and Diagram Set",24.95,"Used","$5.25 shipping",5],
-  ["Complete Project Bundle",325.00,"For parts","Freight quote",9]
-];
+// The backend currently runs locally on port 3000.
+const API_BASE_URL = "http://localhost:3000";
 
-const items = templates.map((t,i)=>({
-  id:`demo-${i+1}`,
-  source:"eBay",
-  title:`${query} — ${t[0]}`,
-  price:t[1],
-  condition:t[2],
-  shipping:t[3],
-  daysAgo:t[4],
-  image:"spyglass-logo.png",
-  url:`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
-}));
+let allItems = [];
+let currentItems = [];
 
-let currentItems=[...items];
-
-function savedItems(){
-  try { return JSON.parse(localStorage.getItem("spyglassSavedItems")||"[]"); }
-  catch { return []; }
+function savedItems() {
+  try {
+    return JSON.parse(
+      localStorage.getItem("spyglassSavedItems") || "[]"
+    );
+  } catch {
+    return [];
+  }
 }
-function setSaved(saved){ localStorage.setItem("spyglassSavedItems",JSON.stringify(saved)); }
 
-function render(list){
-  grid.innerHTML="";
-  emptyState.hidden=list.length!==0;
-  list.forEach(item=>{
-    const saved=savedItems().includes(item.id);
-    const card=document.createElement("article");
-    card.className="result-card";
-    card.innerHTML=`
+function setSaved(saved) {
+  localStorage.setItem(
+    "spyglassSavedItems",
+    JSON.stringify(saved)
+  );
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function normalizeEbayItem(item, index) {
+  const priceValue =
+    item.price?.value ??
+    item.price ??
+    item.currentPrice?.value ??
+    0;
+
+  const shippingCost =
+    item.shippingOptions?.[0]?.shippingCost?.value;
+
+  let shipping = "Shipping details unavailable";
+
+  if (Number(shippingCost) === 0) {
+    shipping = "Free shipping";
+  } else if (shippingCost !== undefined) {
+    shipping = `$${Number(shippingCost).toFixed(2)} shipping`;
+  }
+
+  return {
+    id:
+      item.itemId ||
+      item.id ||
+      `ebay-${index + 1}`,
+
+    source: "eBay",
+
+    title:
+      item.title ||
+      "Untitled eBay listing",
+
+    price:
+      Number(priceValue) || 0,
+
+    condition:
+      item.condition ||
+      "Condition not listed",
+
+    shipping,
+
+    daysAgo: index,
+
+    image:
+      item.image?.imageUrl ||
+      item.thumbnailImages?.[0]?.imageUrl ||
+      "spyglass-logo.png",
+
+    url:
+      item.itemWebUrl ||
+      item.itemAffiliateWebUrl ||
+      item.url ||
+      `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
+  };
+}
+
+function render(list) {
+  grid.innerHTML = "";
+  emptyState.hidden = list.length !== 0;
+
+  list.forEach(item => {
+    const saved = savedItems().includes(item.id);
+    const card = document.createElement("article");
+
+    card.className = "result-card";
+
+    card.innerHTML = `
       <div class="result-image">
-        <span class="source-badge">${item.source}</span>
-        <button class="favorite-button ${saved?"saved":""}" type="button" data-save="${item.id}" aria-label="Save listing">${saved?"♥":"♡"}</button>
-        <img src="${item.image}" alt="">
+        <span class="source-badge">
+          ${escapeHtml(item.source)}
+        </span>
+
+        <button
+          class="favorite-button ${saved ? "saved" : ""}"
+          type="button"
+          data-save="${escapeHtml(item.id)}"
+          aria-label="Save listing"
+        >
+          ${saved ? "♥" : "♡"}
+        </button>
+
+        <img
+          src="${escapeHtml(item.image)}"
+          alt="${escapeHtml(item.title)}"
+          loading="lazy"
+        >
       </div>
+
       <div class="result-body">
-        <h2 class="result-title">${item.title}</h2>
-        <p class="result-price">$${item.price.toFixed(2)}</p>
-        <div class="result-meta"><span>${item.condition}</span><span>${item.shipping}</span></div>
-        <div class="result-actions">
-          <a href="${item.url}" target="_blank" rel="noopener noreferrer">Search on eBay</a>
-          <button type="button" data-copy="${item.url}">Copy Link</button>
+        <h2 class="result-title">
+          ${escapeHtml(item.title)}
+        </h2>
+
+        <p class="result-price">
+          $${item.price.toFixed(2)}
+        </p>
+
+        <div class="result-meta">
+          <span>${escapeHtml(item.condition)}</span>
+          <span>${escapeHtml(item.shipping)}</span>
         </div>
-      </div>`;
+
+        <div class="result-actions">
+          <a
+            href="${escapeHtml(item.url)}"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            View on eBay
+          </a>
+
+          <button
+            type="button"
+            data-copy="${escapeHtml(item.url)}"
+          >
+            Copy Link
+          </button>
+        </div>
+      </div>
+    `;
+
     grid.appendChild(card);
   });
-  summary.textContent=`${list.length} demo discoveries prepared for your search.`;
+
+  const resultWord = list.length === 1 ? "discovery" : "discoveries";
+
+  summary.textContent =
+    `${list.length} ${resultWord} found for “${query}”.`;
 }
 
-function sortItems(){
-  const sorted=[...currentItems];
-  if(sortControl.value==="low") sorted.sort((a,b)=>a.price-b.price);
-  if(sortControl.value==="high") sorted.sort((a,b)=>b.price-a.price);
-  if(sortControl.value==="newest") sorted.sort((a,b)=>a.daysAgo-b.daysAgo);
+function sortItems() {
+  const sorted = [...currentItems];
+
+  if (sortControl.value === "low") {
+    sorted.sort((a, b) => a.price - b.price);
+  }
+
+  if (sortControl.value === "high") {
+    sorted.sort((a, b) => b.price - a.price);
+  }
+
+  if (sortControl.value === "newest") {
+    sorted.sort((a, b) => a.daysAgo - b.daysAgo);
+  }
+
   render(sorted);
 }
 
-applyFilters.addEventListener("click",()=>{
-  const conditions=[...document.querySelectorAll('input[name="condition"]:checked')].map(i=>i.value);
-  const min=Number(document.getElementById("min-price").value||0);
-  const maxValue=document.getElementById("max-price").value;
-  const max=maxValue===""?Infinity:Number(maxValue);
-  currentItems=items.filter(item=>(conditions.length===0||conditions.includes(item.condition))&&item.price>=min&&item.price<=max);
+applyFilters.addEventListener("click", () => {
+  const conditions = [
+    ...document.querySelectorAll(
+      'input[name="condition"]:checked'
+    )
+  ].map(input => input.value);
+
+  const min =
+    Number(document.getElementById("min-price").value || 0);
+
+  const maxValue =
+    document.getElementById("max-price").value;
+
+  const max =
+    maxValue === ""
+      ? Infinity
+      : Number(maxValue);
+
+  currentItems = allItems.filter(item => {
+    const conditionMatches =
+      conditions.length === 0 ||
+      conditions.includes(item.condition);
+
+    const priceMatches =
+      item.price >= min &&
+      item.price <= max;
+
+    return conditionMatches && priceMatches;
+  });
+
   sortItems();
 });
 
-clearFilters.addEventListener("click",()=>{
-  document.querySelectorAll('input[name="condition"]').forEach(i=>i.checked=false);
-  document.getElementById("min-price").value="";
-  document.getElementById("max-price").value="";
-  currentItems=[...items];
-  sortControl.value="best";
+clearFilters.addEventListener("click", () => {
+  document
+    .querySelectorAll('input[name="condition"]')
+    .forEach(input => {
+      input.checked = false;
+    });
+
+  document.getElementById("min-price").value = "";
+  document.getElementById("max-price").value = "";
+
+  currentItems = [...allItems];
+  sortControl.value = "best";
+
   render(currentItems);
 });
 
-sortControl.addEventListener("change",sortItems);
+sortControl.addEventListener("change", sortItems);
 
-document.addEventListener("click",async event=>{
-  const save=event.target.closest("[data-save]");
-  if(save){
-    const id=save.dataset.save;
-    const current=savedItems();
-    const next=current.includes(id)?current.filter(x=>x!==id):[...current,id];
+document.addEventListener("click", async event => {
+  const saveButton = event.target.closest("[data-save]");
+
+  if (saveButton) {
+    const id = saveButton.dataset.save;
+    const current = savedItems();
+
+    const next = current.includes(id)
+      ? current.filter(savedId => savedId !== id)
+      : [...current, id];
+
     setSaved(next);
-    save.classList.toggle("saved");
-    save.textContent=next.includes(id)?"♥":"♡";
+
+    const isSaved = next.includes(id);
+
+    saveButton.classList.toggle("saved", isSaved);
+    saveButton.textContent = isSaved ? "♥" : "♡";
   }
-  const copy=event.target.closest("[data-copy]");
-  if(copy){
-    try{
-      await navigator.clipboard.writeText(copy.dataset.copy);
-      copy.textContent="Copied";
-      setTimeout(()=>copy.textContent="Copy Link",1200);
-    }catch{
-      copy.textContent="Copy failed";
+
+  const copyButton = event.target.closest("[data-copy]");
+
+  if (copyButton) {
+    try {
+      await navigator.clipboard.writeText(
+        copyButton.dataset.copy
+      );
+
+      copyButton.textContent = "Copied";
+
+      setTimeout(() => {
+        copyButton.textContent = "Copy Link";
+      }, 1200);
+    } catch {
+      copyButton.textContent = "Copy failed";
     }
   }
 });
 
 [
-  ["Search eBay",`https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`],
-  ["Search Facebook Marketplace",`https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(query)}`],
-  ["Search Craigslist",`https://www.craigslist.org/search/sss?query=${encodeURIComponent(query)}`],
-  ["Search OfferUp",`https://offerup.com/search?q=${encodeURIComponent(query)}`]
-].forEach(([name,url])=>{
-  const link=document.createElement("a");
-  link.href=url;
-  link.target="_blank";
-  link.rel="noopener noreferrer";
-  link.textContent=name;
+  [
+    "Search eBay",
+    `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
+  ],
+  [
+    "Search Facebook Marketplace",
+    `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(query)}`
+  ],
+  [
+    "Search Craigslist",
+    `https://www.craigslist.org/search/sss?query=${encodeURIComponent(query)}`
+  ],
+  [
+    "Search OfferUp",
+    `https://offerup.com/search?q=${encodeURIComponent(query)}`
+  ]
+].forEach(([name, url]) => {
+  const link = document.createElement("a");
+
+  link.href = url;
+  link.target = "_blank";
+  link.rel = "noopener noreferrer";
+  link.textContent = name;
+
   externalButtons.appendChild(link);
 });
 
-[
-  ["Opening the map…","Preparing marketplace routes."],
-  ["Scanning eBay…",`Looking for “${query}”.`],
-  ["Cataloging discoveries…","Organizing prices, conditions, and shipping."],
-  ["Expedition ready","Your results are prepared."]
-].forEach(([heading,message],index)=>{
-  setTimeout(()=>{
-    statusTitle.textContent=heading;
-    statusMessage.textContent=message;
-    if(index===3){
-      render(items);
-      setTimeout(()=>statusBox.classList.add("complete"),550);
+async function loadResults() {
+  try {
+    statusTitle.textContent = "Scanning eBay…";
+    statusMessage.textContent =
+      `Looking for “${query}”.`;
+
+    const response = await fetch(
+      `${API_BASE_URL}/ebay/search?q=${encodeURIComponent(query)}`
+    );
+
+    if (!response.ok) {
+      throw new Error(
+        `Backend returned status ${response.status}`
+      );
     }
-  },index*650);
-});
+
+    const data = await response.json();
+
+    /*
+      This supports several common response shapes:
+
+      { items: [...] }
+      { results: [...] }
+      { itemSummaries: [...] }
+      { data: { itemSummaries: [...] } }
+    */
+    const rawItems =
+      data.items ||
+      data.results ||
+      data.itemSummaries ||
+      data.data?.itemSummaries ||
+      [];
+
+    allItems = rawItems.map(normalizeEbayItem);
+    currentItems = [...allItems];
+
+    statusTitle.textContent = "Expedition ready";
+    statusMessage.textContent =
+      `${allItems.length} eBay discoveries cataloged.`;
+
+    render(currentItems);
+
+    setTimeout(() => {
+      statusBox.classList.add("complete");
+    }, 550);
+  } catch (error) {
+    console.error("Spyglass search failed:", error);
+
+    statusTitle.textContent = "Search interrupted";
+    statusMessage.textContent =
+      "Spyglass could not reach the search server.";
+
+    summary.textContent =
+      "Unable to load eBay results. Make sure the backend is running.";
+
+    grid.innerHTML = "";
+    emptyState.hidden = false;
+  }
+}
+
+loadResults();
