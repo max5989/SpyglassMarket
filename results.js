@@ -14,14 +14,16 @@ const clearFilters = document.getElementById("clear-filters");
 const applyFilters = document.getElementById("apply-filters");
 const externalButtons = document.getElementById("external-buttons");
 
-document.getElementById("year").textContent = new Date().getFullYear();
+document.getElementById("year").textContent =
+  new Date().getFullYear();
 
 queryInput.value = query;
 document.title = `${query} | Spyglass Market`;
 title.textContent = `Discoveries for “${query}”`;
 
-// The backend currently runs locally on port 3000.
-const API_BASE_URL = "http://localhost:3000";
+// Public Cloudflare Worker backend
+const API_BASE_URL =
+  "https://spyglass-backend.millermax42.workers.dev";
 
 let allItems = [];
 let currentItems = [];
@@ -67,8 +69,23 @@ function normalizeEbayItem(item, index) {
   if (Number(shippingCost) === 0) {
     shipping = "Free shipping";
   } else if (shippingCost !== undefined) {
-    shipping = `$${Number(shippingCost).toFixed(2)} shipping`;
+    shipping =
+      `$${Number(shippingCost).toFixed(2)} shipping`;
   }
+
+  const image =
+    typeof item.image === "string"
+      ? item.image
+      : item.image?.imageUrl ||
+        item.thumbnailImages?.[0]?.imageUrl ||
+        "spyglass-logo.png";
+
+  const itemUrl =
+    item.itemUrl ||
+    item.itemWebUrl ||
+    item.itemAffiliateWebUrl ||
+    item.url ||
+    `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`;
 
   return {
     id:
@@ -76,7 +93,7 @@ function normalizeEbayItem(item, index) {
       item.id ||
       `ebay-${index + 1}`,
 
-    source: "eBay",
+    source: item.marketplace || "eBay",
 
     title:
       item.title ||
@@ -84,6 +101,9 @@ function normalizeEbayItem(item, index) {
 
     price:
       Number(priceValue) || 0,
+
+    currency:
+      item.price?.currency || "USD",
 
     condition:
       item.condition ||
@@ -93,17 +113,21 @@ function normalizeEbayItem(item, index) {
 
     daysAgo: index,
 
-    image:
-      item.image?.imageUrl ||
-      item.thumbnailImages?.[0]?.imageUrl ||
-      "spyglass-logo.png",
+    image,
 
-    url:
-      item.itemWebUrl ||
-      item.itemAffiliateWebUrl ||
-      item.url ||
-      `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
+    url: itemUrl
   };
+}
+
+function formatPrice(item) {
+  try {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: item.currency || "USD"
+    }).format(item.price);
+  } catch {
+    return `$${item.price.toFixed(2)}`;
+  }
 }
 
 function render(list) {
@@ -126,7 +150,7 @@ function render(list) {
           class="favorite-button ${saved ? "saved" : ""}"
           type="button"
           data-save="${escapeHtml(item.id)}"
-          aria-label="Save listing"
+          aria-label="${saved ? "Remove saved listing" : "Save listing"}"
         >
           ${saved ? "♥" : "♡"}
         </button>
@@ -144,7 +168,7 @@ function render(list) {
         </h2>
 
         <p class="result-price">
-          $${item.price.toFixed(2)}
+          ${escapeHtml(formatPrice(item))}
         </p>
 
         <div class="result-meta">
@@ -171,10 +195,19 @@ function render(list) {
       </div>
     `;
 
+    const imageElement = card.querySelector("img");
+
+    imageElement.addEventListener("error", () => {
+      imageElement.src = "spyglass-logo.png";
+    }, { once: true });
+
     grid.appendChild(card);
   });
 
-  const resultWord = list.length === 1 ? "discovery" : "discoveries";
+  const resultWord =
+    list.length === 1
+      ? "discovery"
+      : "discoveries";
 
   summary.textContent =
     `${list.length} ${resultWord} found for “${query}”.`;
@@ -185,17 +218,31 @@ function sortItems() {
 
   if (sortControl.value === "low") {
     sorted.sort((a, b) => a.price - b.price);
-  }
-
-  if (sortControl.value === "high") {
+  } else if (sortControl.value === "high") {
     sorted.sort((a, b) => b.price - a.price);
-  }
-
-  if (sortControl.value === "newest") {
+  } else if (sortControl.value === "newest") {
     sorted.sort((a, b) => a.daysAgo - b.daysAgo);
   }
 
   render(sorted);
+}
+
+function conditionMatchesFilter(itemCondition, filters) {
+  if (filters.length === 0) {
+    return true;
+  }
+
+  const condition = itemCondition.toLowerCase();
+
+  return filters.some(filter => {
+    const selected = filter.toLowerCase();
+
+    if (selected === "for parts") {
+      return condition.includes("for parts");
+    }
+
+    return condition.includes(selected);
+  });
 }
 
 applyFilters.addEventListener("click", () => {
@@ -206,7 +253,9 @@ applyFilters.addEventListener("click", () => {
   ].map(input => input.value);
 
   const min =
-    Number(document.getElementById("min-price").value || 0);
+    Number(
+      document.getElementById("min-price").value || 0
+    );
 
   const maxValue =
     document.getElementById("max-price").value;
@@ -217,15 +266,17 @@ applyFilters.addEventListener("click", () => {
       : Number(maxValue);
 
   currentItems = allItems.filter(item => {
-    const conditionMatches =
-      conditions.length === 0 ||
-      conditions.includes(item.condition);
+    const matchesCondition =
+      conditionMatchesFilter(
+        item.condition,
+        conditions
+      );
 
-    const priceMatches =
+    const matchesPrice =
       item.price >= min &&
       item.price <= max;
 
-    return conditionMatches && priceMatches;
+    return matchesCondition && matchesPrice;
   });
 
   sortItems();
@@ -250,7 +301,8 @@ clearFilters.addEventListener("click", () => {
 sortControl.addEventListener("change", sortItems);
 
 document.addEventListener("click", async event => {
-  const saveButton = event.target.closest("[data-save]");
+  const saveButton =
+    event.target.closest("[data-save]");
 
   if (saveButton) {
     const id = saveButton.dataset.save;
@@ -266,9 +318,16 @@ document.addEventListener("click", async event => {
 
     saveButton.classList.toggle("saved", isSaved);
     saveButton.textContent = isSaved ? "♥" : "♡";
+    saveButton.setAttribute(
+      "aria-label",
+      isSaved
+        ? "Remove saved listing"
+        : "Save listing"
+    );
   }
 
-  const copyButton = event.target.closest("[data-copy]");
+  const copyButton =
+    event.target.closest("[data-copy]");
 
   if (copyButton) {
     try {
@@ -322,25 +381,18 @@ async function loadResults() {
       `Looking for “${query}”.`;
 
     const response = await fetch(
-      `${API_BASE_URL}/ebay/search?q=${encodeURIComponent(query)}`
+      `${API_BASE_URL}/api/ebay/search?q=${encodeURIComponent(query)}`
     );
 
-    if (!response.ok) {
+    const data = await response.json();
+
+    if (!response.ok || data.success === false) {
       throw new Error(
+        data.error ||
         `Backend returned status ${response.status}`
       );
     }
 
-    const data = await response.json();
-
-    /*
-      This supports several common response shapes:
-
-      { items: [...] }
-      { results: [...] }
-      { itemSummaries: [...] }
-      { data: { itemSummaries: [...] } }
-    */
     const rawItems =
       data.items ||
       data.results ||
@@ -365,10 +417,10 @@ async function loadResults() {
 
     statusTitle.textContent = "Search interrupted";
     statusMessage.textContent =
-      "Spyglass could not reach the search server.";
+      "Spyglass could not complete the eBay search.";
 
     summary.textContent =
-      "Unable to load eBay results. Make sure the backend is running.";
+      "Unable to load eBay results. Please try again shortly.";
 
     grid.innerHTML = "";
     emptyState.hidden = false;
