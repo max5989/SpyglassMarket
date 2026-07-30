@@ -39,18 +39,34 @@
 <body>
   <div class="paper-noise" aria-hidden="true"></div>
 
-  <header class="site-header">
-    <a class="brand" href="#top" aria-label="Spyglass Market home">
-      <img src="spyglass-logo.png" alt="" class="brand-logo">
-      <span>Spyglass Market</span>
-    </a>
+  <header class="site-header home-search-header">
+  <a class="brand" href="#top" aria-label="Spyglass Market home">
+    <img src="spyglass-logo.png" alt="" class="brand-logo">
+    <span>Spyglass Market</span>
+  </a>
 
-    <nav aria-label="Main navigation">
-      <a href="#how-it-works">How It Works</a>
-      <a href="#why-spyglass">Why Spyglass</a>
-      <a href="#launch">Launch Updates</a>
-    </nav>
-  </header>
+  <form
+    class="home-header-search"
+    action="results.html"
+    method="get"
+    role="search"
+  >
+    <label class="sr-only" for="home-header-query">
+      Search all marketplaces
+    </label>
+
+    <input
+      id="home-header-query"
+      name="q"
+      type="search"
+      placeholder="Search all marketplaces..."
+      autocomplete="off"
+      required
+    >
+
+    <button type="submit">Search</button>
+  </form>
+</header>
 
   <main id="top">
     <section class="hero">

@@ -3,7 +3,7 @@ const query = (params.get("q") || "1964 Oldsmobile parts").trim();
 
 const title = document.getElementById("results-title");
 const summary = document.getElementById("results-summary");
-const queryInput = document.getElementById("results-query");
+const queryInput = document.getElementById("header-query");
 const grid = document.getElementById("results-grid");
 const emptyState = document.getElementById("empty-state");
 const statusBox = document.getElementById("expedition-status");
@@ -17,7 +17,9 @@ const externalButtons = document.getElementById("external-buttons");
 document.getElementById("year").textContent =
   new Date().getFullYear();
 
-queryInput.value = query;
+if (queryInput) {
+    queryInput.value = query;
+}
 document.title = `${query} | Spyglass Market`;
 title.textContent = `Discoveries for “${query}”`;
 

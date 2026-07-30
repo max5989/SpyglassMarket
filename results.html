@@ -3,120 +3,400 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
   <title>Search Results | Spyglass Market</title>
-  <meta name="description" content="Explore marketplace search results with Spyglass Market.">
+
+  <meta
+    name="description"
+    content="Explore marketplace search results with Spyglass Market."
+  >
   <meta name="robots" content="noindex, follow">
+
   <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap" rel="stylesheet">
+
+  <link
+    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@500;600;700&family=Libre+Baskerville:ital,wght@0,400;0,700;1,400&display=swap"
+    rel="stylesheet"
+  >
+
   <link rel="stylesheet" href="style.css">
   <link rel="stylesheet" href="results.css">
 </head>
+
 <body class="results-page">
   <div class="paper-noise" aria-hidden="true"></div>
 
   <header class="site-header results-header">
-    <a class="brand" href="index.html" aria-label="Spyglass Market home">
-      <img src="spyglass-logo.png" alt="" class="brand-logo">
+    <a
+      class="brand"
+      href="index.html"
+      aria-label="Spyglass Market home"
+    >
+      <img
+        src="spyglass-logo.png"
+        alt=""
+        class="brand-logo"
+      >
       <span>Spyglass Market</span>
     </a>
-    <a class="back-home" href="index.html">Return Home</a>
+
+    <form
+      class="header-search"
+      action="results.html"
+      method="get"
+      role="search"
+    >
+      <label class="sr-only" for="header-query">
+        Search all marketplaces
+      </label>
+
+      <input
+        id="header-query"
+        name="q"
+        type="search"
+        placeholder="Search all marketplaces..."
+        autocomplete="off"
+        required
+      >
+
+      <button type="submit">
+        Search
+      </button>
+    </form>
+
+    <a class="back-home" href="index.html">
+      Return Home
+    </a>
   </header>
 
   <main class="results-main">
     <section class="results-top">
       <div>
         <p class="eyebrow">Marketplace Expedition</p>
-        <h1 id="results-title">Searching the markets…</h1>
-        <p id="results-summary">Preparing your results.</p>
-      </div>
 
-      <form class="results-search" action="results.html" method="get" role="search">
-        <label class="sr-only" for="results-query">Search marketplaces</label>
-        <input id="results-query" name="q" type="search" placeholder="Search for anything..." required>
-        <button type="submit">Search Again</button>
-      </form>
+        <h1 id="results-title">
+          Searching the markets…
+        </h1>
+
+        <p id="results-summary">
+          Preparing your results.
+        </p>
+      </div>
     </section>
 
-    <section class="expedition-status" id="expedition-status" aria-live="polite">
-      <div class="status-compass" aria-hidden="true">✦</div>
+    <section
+      class="expedition-status"
+      id="expedition-status"
+      aria-live="polite"
+    >
+      <div class="status-compass" aria-hidden="true">
+        ✦
+      </div>
+
       <div>
-        <strong id="status-title">Opening the map…</strong>
-        <p id="status-message">Preparing marketplace routes.</p>
+        <strong id="status-title">
+          Opening the map…
+        </strong>
+
+        <p id="status-message">
+          Preparing marketplace routes.
+        </p>
       </div>
     </section>
 
     <section class="results-layout">
-      <aside class="filters-panel" aria-label="Search filters">
+      <aside
+        class="filters-panel"
+        aria-label="Search filters"
+      >
         <div class="filter-heading">
           <h2>Refine Search</h2>
-          <button type="button" id="clear-filters">Clear</button>
+
+          <button
+            type="button"
+            id="clear-filters"
+          >
+            Clear
+          </button>
         </div>
 
         <fieldset>
           <legend>Marketplace</legend>
-          <label><input type="checkbox" name="source" value="eBay" checked> eBay</label>
-          <label class="future-filter"><input type="checkbox" disabled> Facebook Marketplace <span>Soon</span></label>
-          <label class="future-filter"><input type="checkbox" disabled> Craigslist <span>Soon</span></label>
-          <label class="future-filter"><input type="checkbox" disabled> OfferUp <span>Soon</span></label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="source"
+              value="eBay"
+              checked
+            >
+            eBay
+          </label>
+
+          <label class="future-filter">
+            <input type="checkbox" disabled>
+            Etsy
+            <span>Soon</span>
+          </label>
+
+          <label class="future-filter">
+            <input type="checkbox" disabled>
+            Craigslist
+            <span>Soon</span>
+          </label>
+
+          <label class="future-filter">
+            <input type="checkbox" disabled>
+            Facebook Marketplace
+            <span>Soon</span>
+          </label>
+
+          <label class="future-filter">
+            <input type="checkbox" disabled>
+            OfferUp
+            <span>Soon</span>
+          </label>
         </fieldset>
 
         <fieldset>
           <legend>Condition</legend>
-          <label><input type="checkbox" name="condition" value="New"> New</label>
-          <label><input type="checkbox" name="condition" value="Used"> Used</label>
-          <label><input type="checkbox" name="condition" value="For parts"> For parts</label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="condition"
+              value="New"
+            >
+            New
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="condition"
+              value="Used"
+            >
+            Used
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              name="condition"
+              value="For parts"
+            >
+            For parts
+          </label>
         </fieldset>
 
         <fieldset>
           <legend>Price</legend>
+
           <div class="price-row">
-            <label><span>Minimum</span><input id="min-price" type="number" min="0" step="1" placeholder="$0"></label>
-            <label><span>Maximum</span><input id="max-price" type="number" min="0" step="1" placeholder="Any"></label>
+            <label>
+              <span>Minimum</span>
+
+              <input
+                id="min-price"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="$0"
+              >
+            </label>
+
+            <label>
+              <span>Maximum</span>
+
+              <input
+                id="max-price"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="Any"
+              >
+            </label>
           </div>
         </fieldset>
 
-        <button class="button primary filter-apply" type="button" id="apply-filters">Apply Filters</button>
+        <button
+          class="button primary filter-apply"
+          type="button"
+          id="apply-filters"
+        >
+          Apply Filters
+        </button>
       </aside>
 
       <div class="results-content">
-        <div class="results-toolbar">
-          <div class="source-tabs" role="group" aria-label="Marketplace source">
-            <button class="source-tab active" type="button">All Sources</button>
-            <button class="source-tab" type="button">eBay</button>
+        <section
+          class="marketplace-section ebay-section"
+          aria-labelledby="ebay-section-title"
+        >
+          <div class="marketplace-section-header">
+            <div>
+              <p class="marketplace-kicker">
+                Marketplace Results
+              </p>
+
+              <h2 id="ebay-section-title">
+                eBay
+              </h2>
+
+              <p class="marketplace-description">
+                Live listings provided by eBay.
+              </p>
+            </div>
+
+            <div class="marketplace-controls">
+              <label class="sort-control">
+                <span>Sort eBay</span>
+
+                <select id="sort-results">
+                  <option value="best">Best Match</option>
+                  <option value="low">Price: Low to High</option>
+                  <option value="high">Price: High to Low</option>
+                  <option value="newest">Newest</option>
+                </select>
+              </label>
+            </div>
           </div>
 
-          <label class="sort-control">
-            <span>Sort</span>
-            <select id="sort-results">
-              <option value="best">Best Match</option>
-              <option value="low">Price: Low to High</option>
-              <option value="high">Price: High to Low</option>
-              <option value="newest">Newest</option>
-            </select>
-          </label>
-        </div>
+          <div
+            class="marketplace-banner"
+            id="results-banner"
+          >
+            <strong>Live eBay results</strong>
 
-        <div class="demo-banner" id="results-banner">
-          <strong>Live eBay results</strong>
-          <span>More marketplace connections are coming soon</span>
-        </div>
+            <span>
+              Listings in this section are kept separate from other marketplaces.
+            </span>
+          </div>
 
-        <div class="results-grid" id="results-grid" aria-live="polite"></div>
+          <div
+            class="results-grid"
+            id="results-grid"
+            aria-live="polite"
+          ></div>
 
-        <div class="empty-state" id="empty-state" hidden>
-          <span>⌖</span>
-          <h2>No discoveries matched those filters.</h2>
-          <p>Try widening the price range or selecting another condition.</p>
-        </div>
+          <div
+            class="empty-state"
+            id="empty-state"
+            hidden
+          >
+            <span>⌖</span>
+
+            <h2>
+              No eBay discoveries matched those filters.
+            </h2>
+
+            <p>
+              Try widening the price range or selecting another condition.
+            </p>
+          </div>
+        </section>
+
+        <section
+          class="marketplace-section future-marketplaces"
+          aria-labelledby="future-marketplaces-title"
+        >
+          <div class="marketplace-section-header">
+            <div>
+              <p class="marketplace-kicker">
+                Expedition Routes
+              </p>
+
+              <h2 id="future-marketplaces-title">
+                More marketplaces are coming
+              </h2>
+
+              <p class="marketplace-description">
+                Each marketplace will appear in its own clearly separated section.
+              </p>
+            </div>
+          </div>
+
+          <div class="future-marketplace-grid">
+            <article class="future-marketplace-card">
+              <span class="future-marketplace-icon" aria-hidden="true">
+                ✦
+              </span>
+
+              <div>
+                <h3>Etsy</h3>
+                <p>Handmade, vintage, and specialty goods.</p>
+              </div>
+
+              <span class="coming-soon-badge">
+                Coming Soon
+              </span>
+            </article>
+
+            <article class="future-marketplace-card">
+              <span class="future-marketplace-icon" aria-hidden="true">
+                ⌖
+              </span>
+
+              <div>
+                <h3>Craigslist</h3>
+                <p>Local listings and classified discoveries.</p>
+              </div>
+
+              <span class="coming-soon-badge">
+                Coming Soon
+              </span>
+            </article>
+
+            <article class="future-marketplace-card">
+              <span class="future-marketplace-icon" aria-hidden="true">
+                ◈
+              </span>
+
+              <div>
+                <h3>Facebook Marketplace</h3>
+                <p>Nearby marketplace listings where access permits.</p>
+              </div>
+
+              <span class="coming-soon-badge">
+                Coming Soon
+              </span>
+            </article>
+
+            <article class="future-marketplace-card">
+              <span class="future-marketplace-icon" aria-hidden="true">
+                ◌
+              </span>
+
+              <div>
+                <h3>OfferUp</h3>
+                <p>Local secondhand listings and nearby finds.</p>
+              </div>
+
+              <span class="coming-soon-badge">
+                Coming Soon
+              </span>
+            </article>
+          </div>
+        </section>
 
         <section class="external-searches">
           <div>
-            <p class="eyebrow">Continue the Search</p>
-            <h2>Open this search on other marketplaces</h2>
+            <p class="eyebrow">
+              Continue the Search
+            </p>
+
+            <h2>
+              Open this search on other marketplaces
+            </h2>
           </div>
-          <div class="external-buttons" id="external-buttons"></div>
+
+          <div
+            class="external-buttons"
+            id="external-buttons"
+          ></div>
         </section>
       </div>
     </section>
@@ -125,14 +405,22 @@
   <footer>
     <div>
       <strong>Spyglass Market</strong>
-      <p>Explore farther. Discover more.</p>
+
+      <p>
+        Explore farther. Discover more.
+      </p>
     </div>
+
     <div class="footer-links">
       <a href="index.html">Home</a>
       <a href="index.html#how-it-works">How It Works</a>
       <a href="index.html#launch">Updates</a>
     </div>
-    <p class="copyright">© <span id="year"></span> Spyglass Market. All rights reserved.</p>
+
+    <p class="copyright">
+      © <span id="year"></span>
+      Spyglass Market. All rights reserved.
+    </p>
   </footer>
 
   <script src="results.js"></script>
