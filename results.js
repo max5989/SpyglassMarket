@@ -18,7 +18,7 @@ document.getElementById("year").textContent =
   new Date().getFullYear();
 
 if (queryInput) {
-    queryInput.value = query;
+  queryInput.value = query;
 }
 document.title = `${query} | Spyglass Market`;
 title.textContent = `Discoveries for “${query}”`;
@@ -56,7 +56,18 @@ function escapeHtml(value) {
     .replaceAll("'", "&#039;");
 }
 
-function normalizeEbayItem(item, index) {
+function decodeHtmlEntities(value) {
+  const textarea = document.createElement("textarea");
+  textarea.innerHTML = String(value ?? "");
+  return textarea.value;
+}
+
+function normalizeMarketplaceItem(item, index, marketplace) {
+  const source =
+    marketplace === "etsy"
+      ? "Etsy"
+      : "eBay";
+
   const priceValue =
     item.price?.value ??
     item.price ??
@@ -68,7 +79,9 @@ function normalizeEbayItem(item, index) {
 
   let shipping = "Shipping details unavailable";
 
-  if (Number(shippingCost) === 0) {
+  if (marketplace === "etsy") {
+    shipping = "View Etsy for shipping";
+  } else if (Number(shippingCost) === 0) {
     shipping = "Free shipping";
   } else if (shippingCost !== undefined) {
     shipping =
@@ -79,27 +92,35 @@ function normalizeEbayItem(item, index) {
     typeof item.image === "string"
       ? item.image
       : item.image?.imageUrl ||
-        item.thumbnailImages?.[0]?.imageUrl ||
-        "spyglass-logo.png";
+      item.thumbnailImages?.[0]?.imageUrl ||
+      "spyglass-logo.png";
+
+  const fallbackUrl =
+    marketplace === "etsy"
+      ? `https://www.etsy.com/search?q=${encodeURIComponent(query)}`
+      : `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`;
 
   const itemUrl =
     item.itemUrl ||
     item.itemWebUrl ||
     item.itemAffiliateWebUrl ||
     item.url ||
-    `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`;
+    fallbackUrl;
 
   return {
     id:
-      item.itemId ||
-      item.id ||
-      `ebay-${index + 1}`,
+      `${marketplace}-` +
+      (item.itemId || item.id || index + 1),
 
-    source: item.marketplace || "eBay",
+    source,
+
+    marketplace,
 
     title:
-      item.title ||
-      "Untitled eBay listing",
+      decodeHtmlEntities(
+        item.title ||
+        `Untitled ${source} listing`
+      ),
 
     price:
       Number(priceValue) || 0,
@@ -109,7 +130,9 @@ function normalizeEbayItem(item, index) {
 
     condition:
       item.condition ||
-      "Condition not listed",
+      (marketplace === "etsy"
+        ? "Not specified by Etsy"
+        : "Condition not listed"),
 
     shipping,
 
@@ -184,7 +207,7 @@ function render(list) {
             target="_blank"
             rel="noopener noreferrer"
           >
-            View on eBay
+            View on ${escapeHtml(item.source)}
           </a>
 
           <button
@@ -254,6 +277,12 @@ applyFilters.addEventListener("click", () => {
     )
   ].map(input => input.value);
 
+  const marketplaces = [
+    ...document.querySelectorAll(
+      'input[name="marketplace"]:checked'
+    )
+  ].map(input => input.value.toLowerCase());
+
   const min =
     Number(
       document.getElementById("min-price").value || 0
@@ -274,11 +303,18 @@ applyFilters.addEventListener("click", () => {
         conditions
       );
 
+    const matchesMarketplace =
+      marketplaces.includes(item.marketplace.toLowerCase());
+
     const matchesPrice =
       item.price >= min &&
       item.price <= max;
 
-    return matchesCondition && matchesPrice;
+    return (
+      matchesCondition &&
+      matchesMarketplace &&
+      matchesPrice
+    );
   });
 
   sortItems();
@@ -286,7 +322,9 @@ applyFilters.addEventListener("click", () => {
 
 clearFilters.addEventListener("click", () => {
   document
-    .querySelectorAll('input[name="condition"]')
+    .querySelectorAll(
+      'input[name="condition"], input[name="marketplace"]'
+    )
     .forEach(input => {
       input.checked = false;
     });
@@ -354,6 +392,10 @@ document.addEventListener("click", async event => {
     `https://www.ebay.com/sch/i.html?_nkw=${encodeURIComponent(query)}`
   ],
   [
+    "Search Etsy",
+    `https://www.etsy.com/search?q=${encodeURIComponent(query)}`
+  ],
+  [
     "Search Facebook Marketplace",
     `https://www.facebook.com/marketplace/search/?query=${encodeURIComponent(query)}`
   ],
@@ -376,57 +418,111 @@ document.addEventListener("click", async event => {
   externalButtons.appendChild(link);
 });
 
-async function loadResults() {
-  try {
-    statusTitle.textContent = "Scanning eBay…";
-    statusMessage.textContent =
-      `Looking for “${query}”.`;
+async function fetchMarketplace(path, marketplace) {
+  const response = await fetch(
+    `${API_BASE_URL}${path}?q=${encodeURIComponent(query)}`
+  );
 
-    const response = await fetch(
-      `${API_BASE_URL}/api/ebay/search?q=${encodeURIComponent(query)}`
+  const data = await response.json();
+
+  if (!response.ok || data.success === false) {
+    throw new Error(
+      data.error ||
+      `${marketplace} returned status ${response.status}`
     );
+  }
 
-    const data = await response.json();
+  const rawItems =
+    data.items ||
+    data.results ||
+    data.itemSummaries ||
+    data.data?.itemSummaries ||
+    [];
 
-    if (!response.ok || data.success === false) {
-      throw new Error(
-        data.error ||
-        `Backend returned status ${response.status}`
-      );
-    }
+  return rawItems.map((item, index) =>
+    normalizeMarketplaceItem(
+      item,
+      index,
+      marketplace
+    )
+  );
+}
 
-    const rawItems =
-      data.items ||
-      data.results ||
-      data.itemSummaries ||
-      data.data?.itemSummaries ||
-      [];
+async function loadResults() {
+  statusTitle.textContent =
+    "Scanning eBay and Etsy…";
 
-    allItems = rawItems.map(normalizeEbayItem);
-    currentItems = [...allItems];
+  statusMessage.textContent =
+    `Looking for “${query}”.`;
 
-    statusTitle.textContent = "Expedition ready";
+  const results = await Promise.allSettled([
+    fetchMarketplace(
+      "/api/ebay/search",
+      "ebay"
+    ),
+    fetchMarketplace(
+      "/api/etsy/search",
+      "etsy"
+    )
+  ]);
+
+  const ebayItems =
+    results[0].status === "fulfilled"
+      ? results[0].value
+      : [];
+
+  const etsyItems =
+    results[1].status === "fulfilled"
+      ? results[1].value
+      : [];
+
+  if (results[0].status === "rejected") {
+    console.error(
+      "eBay search failed:",
+      results[0].reason
+    );
+  }
+
+  if (results[1].status === "rejected") {
+    console.error(
+      "Etsy search failed:",
+      results[1].reason
+    );
+  }
+
+  allItems = [
+    ...ebayItems,
+    ...etsyItems
+  ];
+
+  currentItems = [...allItems];
+
+  if (allItems.length === 0) {
+    statusTitle.textContent =
+      "Search interrupted";
+
     statusMessage.textContent =
-      `${allItems.length} eBay discoveries cataloged.`;
-
-    render(currentItems);
-
-    setTimeout(() => {
-      statusBox.classList.add("complete");
-    }, 550);
-  } catch (error) {
-    console.error("Spyglass search failed:", error);
-
-    statusTitle.textContent = "Search interrupted";
-    statusMessage.textContent =
-      "Spyglass could not complete the eBay search.";
+      "Spyglass could not reach either marketplace.";
 
     summary.textContent =
-      "Unable to load eBay results. Please try again shortly.";
+      "Unable to load marketplace results. Please try again shortly.";
 
     grid.innerHTML = "";
     emptyState.hidden = false;
+    return;
   }
+
+  statusTitle.textContent = "Expedition ready";
+
+  statusMessage.textContent =
+    `${ebayItems.length} eBay and ` +
+    `${etsyItems.length} Etsy discoveries cataloged.`;
+
+  render(currentItems);
+
+  setTimeout(() => {
+    statusBox.classList.add("complete");
+  }, 550);
 }
 
 loadResults();
